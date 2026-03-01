@@ -162,7 +162,13 @@
             align-items: center;
             gap: 8px;
             opacity: 0;
-            animation: fadeUp 1s ease 1.5s forwards;
+            /* Use fadeInOnly so transform isn't overridden by fadeUp */
+            animation: fadeInOnly 1s ease 1.5s forwards;
+        }
+
+        @keyframes fadeInOnly {
+            from { opacity: 0; }
+            to   { opacity: 1; }
         }
 
         .hero-scroll-hint span {
@@ -505,7 +511,20 @@
             color: #2a2620;
         }
 
-        /* ─── MOBILE ────────────────────────────────────────────── */
+        /* ─── TABLET (481px–1024px) ─────────────────────────────── */
+        @media (min-width: 481px) and (max-width: 1024px) {
+            .letter-wrap {
+                max-width: 720px;
+                padding: 72px 48px 96px;
+            }
+            .letter-salutation { font-size: clamp(1.6rem, 3.5vw, 2rem); }
+            .letter-body p { font-size: clamp(1rem, 2vw, 1.1rem); }
+            .cta-buttons { gap: 16px; }
+            .btn { padding: 16px 32px; font-size: 0.82rem; }
+            .modal { max-width: 640px; }
+        }
+
+        /* ─── MOBILE (max 480px) ────────────────────────────────── */
         @media (max-width: 480px) {
             .cta-buttons { flex-direction: column; align-items: stretch; }
             .btn { width: 100%; text-align: center; padding: 16px 20px; }
@@ -547,7 +566,8 @@
                 Kat and I want to get our people together. <strong>Actually together</strong> — not 
                 "we should really do something soon" together. Once a month, around a 
                 table, with food that someone actually made and a night that doesn't end 
-                because the bar is closing.
+                because the bar is closing. Whether you're coming solo or as a pair, 
+                there's a seat for you.
             </p>
 
             <p>
@@ -608,15 +628,9 @@
             <p class="cta-closing">If you're in — or even just a little curious — let us know.</p>
             <div class="cta-deadline">RSVP by March 15 so we can plan</div>
             <div class="cta-buttons">
-                <a
-                    href="mailto:katkendall01@gmail.com,ruritanrunner@aol.com?subject=I'm%20In%20%E2%80%94%20Family%20Table%20Supper%20Club%202026&body=Hey%20Kat%20and%20Christopher%2C%0A%0ACount%20me%20in%20for%20Season%20One%20of%20The%20Family%20Table%20Supper%20Club!%0A%0AName%3A%20%5BYour%20Name%5D%0APlus%20one%3F%20%5BYes%20%2F%20No%5D%0ADietary%20needs%20or%20aversions%3A%20%5BNone%20%2F%20List%20them%5D%0AApril%20nights%20that%20don't%20work%20for%20me%3A%20%5BNone%20%2F%20List%20them%5D%0A%0ACan't%20wait."
-                    class="btn btn-primary"
-                >Count Me In — Email</a>
+                <a href="#" id="email-btn" class="btn btn-primary">Count Me In — Email</a>
 
-                <a
-                    href="sms:+15714424574,+14346037733?body=Hey%20Kat%20and%20Christopher%20%E2%80%94%20I'm%20in%20for%20Season%20One%20of%20The%20Family%20Table%20Supper%20Club!%20%F0%9F%8D%BD%EF%B8%8F"
-                    class="btn btn-secondary"
-                >Text Us Instead</a>
+                <a href="#" id="sms-btn" class="btn btn-secondary">Text Us Instead</a>
             </div>
 
             <button class="rules-trigger" id="rules-trigger">
@@ -695,8 +709,54 @@
         </div>
     </div>
 
-    <script>
-        // ── Video fallback ───────────────────────────────────────
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // ── Email link ───────────────────────────────────────────
+        // Built in JS and using cc: instead of comma-separated to: 
+        // for broadest mobile mail client compatibility.
+        // Characters are encoded individually to avoid GitHub/CF mangling.
+        (function() {
+            const u1 = 'katkendall01';
+            const u2 = 'ruritanrunner';
+            const d1 = 'gmail.com';
+            const d2 = 'aol.com';
+            const to  = u1 + '@' + d1;
+            const cc  = u2 + '@' + d2;
+
+            const subject = "I'm In \u2014 Family Table Supper Club 2026";
+            const body = [
+                "Hey Kat and Christopher,",
+                "",
+                "Count me (us) in for Season One of The Family Table Supper Club!",
+                "",
+                "Name(s): ",
+                "Coming solo or as a pair: ",
+                "Dietary needs or aversions: ",
+                "April nights that don\u2019t work: ",
+                "",
+                "Can\u2019t wait."
+            ].join('\r\n');
+
+            const href = [
+                'mailto:', to,
+                '?cc=', encodeURIComponent(cc),
+                '&subject=', encodeURIComponent(subject),
+                '&body=', encodeURIComponent(body)
+            ].join('');
+
+            const btn = document.getElementById('email-btn');
+            if (btn) btn.href = href;
+        })();
+
+        // ── SMS link ─────────────────────────────────────────────
+        (function() {
+            const n1  = '+15714424574';
+            const n2  = '+14346037733';
+            const msg = "Hey Kat and Christopher \u2014 we\u2019re in for Season One of The Family Table Supper Club! \uD83C\uDF7D\uFE0F";
+            // sms: multi-number format works on iOS; Android uses first number
+            const href = 'sms:' + n1 + ',' + n2 + '?body=' + encodeURIComponent(msg);
+            const btn  = document.getElementById('sms-btn');
+            if (btn) btn.href = href;
+        })();
         document.getElementById('hero-video').addEventListener('error', function() {
             this.style.display = 'none';
         });
