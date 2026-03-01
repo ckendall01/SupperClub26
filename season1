@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Family Table Supper Club</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500;600&family=Pacifico&family=Permanent+Marker&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=DM+Serif+Display:ital@0;1&family=Abril+Fatface&family=Righteous&family=Oswald:wght@600;700&family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Fredoka+One&family=Satisfy&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #0c0b09;
+            --text: #ede8df;
+            --muted: #8a8276;
+            --accent: #c9a84c;
+            --card-bg: #141210;
+            --border: #1e1c18;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Lora', serif;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ─── HERO ─────────────────────────────────────────────── */
+        .hero {
+            position: relative;
+            height: 100svh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            transition: background 1s ease;
+            background: radial-gradient(ellipse at 55% 40%, #2e1f05 0%, #0c0b09 72%);
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 50%; left: 50%;
+            min-width: 100%; min-height: 100%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            opacity: 0.2;
+            object-fit: cover;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
+            background-size: 180px;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            padding: 0 20px;
+            max-width: 820px;
+            width: 100%;
+        }
+
+        .hero-eyebrow {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(0.52rem, 1.8vw, 0.68rem);
+            font-weight: 500;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 18px;
+            opacity: 0;
+            animation: fadeUp 0.9s ease 0.2s forwards;
+        }
+
+        .hero-club-name {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(0.82rem, 2.2vw, 1.15rem);
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+            opacity: 0;
+            animation: fadeUp 0.9s ease 0.45s forwards;
+            transition: color 0.9s ease;
+        }
+
+        #dynamic-title {
+            font-size: clamp(2.4rem, 7vw, 5.8rem);
+            font-family: 'Cormorant Garamond', serif;
+            line-height: 1.05;
+            margin-bottom: 14px;
+            transition: opacity 0.44s ease, transform 0.44s ease;
+            word-break: break-word;
+            hyphens: auto;
+        }
+
+        .hero-divider {
+            width: 30px;
+            height: 1px;
+            background: var(--accent);
+            margin: 18px auto;
+            opacity: 0;
+            animation: fadeUp 0.9s ease 0.72s forwards;
+            transition: background 0.9s ease;
+        }
+
+        #dynamic-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(0.62rem, 1.8vw, 0.88rem);
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: clamp(0.12em, 1.5vw, 0.28em);
+            transition: opacity 0.44s ease, color 0.44s ease, transform 0.44s ease;
+            padding: 0 8px;
+        }
+
+        .theme-pips {
+            display: flex;
+            gap: 9px;
+            justify-content: center;
+            margin-top: 28px;
+            opacity: 0;
+            animation: fadeUp 0.9s ease 0.95s forwards;
+        }
+
+        .pip {
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: #2a2820;
+            transition: background 0.4s ease, transform 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        .pip::after { content: ''; position: absolute; inset: -8px; }
+        .pip.active { transform: scale(1.7); }
+
+        .hero-scroll-hint {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            animation: fadeUp 1s ease 1.5s forwards;
+        }
+
+        .hero-scroll-hint span {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.52rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .scroll-line {
+            width: 1px; height: 32px;
+            background: linear-gradient(to bottom, var(--accent), transparent);
+            animation: scrollPulse 2.2s ease-in-out 2s infinite;
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 0.3; transform: scaleY(1); }
+            50%       { opacity: 1;   transform: scaleY(1.15); }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── LETTER ────────────────────────────────────────────── */
+        .letter-wrap {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: clamp(56px, 10vw, 110px) clamp(22px, 6vw, 48px) clamp(64px, 12vw, 120px);
+        }
+
+        .letter-salutation {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.45rem, 4vw, 2.1rem);
+            font-style: italic;
+            color: var(--text);
+            margin-bottom: 30px;
+            line-height: 1.3;
+        }
+
+        .letter-body p {
+            font-size: clamp(0.97rem, 2vw, 1.08rem);
+            color: #c8c0b0;
+            margin-bottom: 22px;
+            line-height: 1.88;
+        }
+
+        .letter-body p:last-child { margin-bottom: 0; }
+        .letter-body strong { color: var(--text); font-weight: 500; }
+        .letter-body em { color: var(--accent); font-style: italic; }
+
+        .letter-signoff {
+            margin-top: 44px;
+            padding-top: 36px;
+            border-top: 1px solid var(--border);
+        }
+
+        .letter-signoff p {
+            font-size: clamp(0.95rem, 2vw, 1.05rem);
+            color: #c8c0b0;
+            margin-bottom: 6px;
+            line-height: 1.7;
+        }
+
+        .letter-signature {
+            font-family: 'Pacifico', cursive;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            color: var(--accent);
+            margin-top: 20px;
+            line-height: 1.4;
+        }
+
+        /* ─── CTA ───────────────────────────────────────────────── */
+        .cta-wrap {
+            margin-top: 48px;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .cta-closing {
+            font-size: clamp(0.92rem, 2vw, 1.02rem);
+            color: var(--muted);
+            margin-bottom: 6px;
+            font-style: italic;
+        }
+
+        .cta-deadline {
+            display: inline-block;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent);
+            border: 1px solid #2e2618;
+            padding: 6px 14px;
+            margin-bottom: 28px;
+            margin-top: 10px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 28px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            transition: all 0.28s ease;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: #000;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #dfc070;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(201, 168, 76, 0.25);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text);
+            border: 1px solid #363228;
+        }
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .rules-trigger {
+            display: inline-block;
+            margin-top: 28px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            color: #4a4640;
+            letter-spacing: 0.08em;
+            border-bottom: 1px solid #2a2620;
+            padding-bottom: 1px;
+            transition: color 0.2s ease, border-color 0.2s ease;
+            cursor: pointer;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            text-decoration: none;
+        }
+        .rules-trigger:hover {
+            color: var(--muted);
+            border-bottom-color: var(--muted);
+        }
+
+        /* ─── MODAL ─────────────────────────────────────────────── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(8, 7, 6, 0.9);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.32s ease;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            background: #111009;
+            border-top: 1px solid #252218;
+            border-left: 1px solid #252218;
+            border-right: 1px solid #252218;
+            width: 100%;
+            max-width: 600px;
+            max-height: 88svh;
+            overflow-y: auto;
+            padding: clamp(24px, 5vw, 44px) clamp(22px, 5vw, 44px);
+            padding-bottom: calc(clamp(28px, 5vw, 48px) + env(safe-area-inset-bottom));
+            position: relative;
+            border-radius: 16px 16px 0 0;
+            transform: translateY(100%);
+            transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
+            scrollbar-width: thin;
+            scrollbar-color: #2e2a22 transparent;
+        }
+
+        @media (min-width: 640px) {
+            .modal-overlay { align-items: center; padding: 24px; }
+            .modal {
+                border: 1px solid #252218;
+                border-radius: 4px;
+                transform: translateY(16px);
+                transition: transform 0.32s ease;
+                max-height: 82svh;
+            }
+        }
+
+        .modal-overlay.open .modal { transform: translateY(0); }
+
+        .modal::-webkit-scrollbar { width: 4px; }
+        .modal::-webkit-scrollbar-track { background: transparent; }
+        .modal::-webkit-scrollbar-thumb { background: #2e2a22; border-radius: 2px; }
+
+        .modal-handle {
+            width: 36px; height: 4px;
+            background: #2e2a22;
+            border-radius: 2px;
+            margin: 0 auto 22px;
+            display: block;
+        }
+        @media (min-width: 640px) { .modal-handle { display: none; } }
+
+        .modal-close {
+            position: absolute;
+            top: clamp(12px, 3vw, 18px);
+            right: clamp(14px, 4vw, 20px);
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 1.3rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 6px;
+            transition: color 0.2s ease;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .modal-close:hover { color: var(--text); }
+
+        .modal-eyebrow {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.58rem;
+            letter-spacing: 0.34em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.4rem, 4vw, 1.9rem);
+            color: var(--text);
+            margin-bottom: 8px;
+            line-height: 1.2;
+            padding-right: 44px;
+        }
+
+        .modal-tagline {
+            font-family: 'Lora', serif;
+            font-size: clamp(0.85rem, 2vw, 0.92rem);
+            font-style: italic;
+            color: var(--muted);
+            margin-bottom: 28px;
+            padding-bottom: 26px;
+            border-bottom: 1px solid var(--border);
+            line-height: 1.65;
+        }
+
+        .modal-tagline .punchline {
+            display: block;
+            font-style: normal;
+            font-size: 0.78rem;
+            color: #5a5248;
+            margin-top: 6px;
+        }
+
+        /* Each rule */
+        .modal-rule {
+            margin-bottom: 26px;
+            padding-bottom: 26px;
+            border-bottom: 1px solid var(--border);
+        }
+        .modal-rule:last-of-type {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .modal-rule-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.56rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .modal-rule h4 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .modal-rule p {
+            font-size: clamp(0.84rem, 2vw, 0.88rem);
+            color: #a09888;
+            line-height: 1.75;
+        }
+        .modal-rule p em { color: var(--muted); font-style: italic; }
+
+        /* ─── FOOTER ────────────────────────────────────────────── */
+        .footer {
+            text-align: center;
+            padding: 24px 20px 40px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer p {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #2a2620;
+        }
+
+        /* ─── MOBILE ────────────────────────────────────────────── */
+        @media (max-width: 480px) {
+            .cta-buttons { flex-direction: column; align-items: stretch; }
+            .btn { width: 100%; text-align: center; padding: 16px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO -->
+    <header class="hero">
+        <div class="hero-bg" id="hero-bg"></div>
+        <video class="hero-video" id="hero-video" autoplay loop muted playsinline>
+            <source src="YOUR_VIDEO_FILE.mp4" type="video/mp4">
+        </video>
+
+        <div class="hero-content">
+            <p class="hero-eyebrow">Season One &nbsp;·&nbsp; 2026</p>
+            <p class="hero-club-name" id="hero-club-name">The Family Table Supper Club</p>
+            <h1 id="dynamic-title">The Moody Steakhouse</h1>
+            <div class="hero-divider" id="hero-divider"></div>
+            <p id="dynamic-subtitle">Dim Lighting. Ribeyes. Red Wine.</p>
+            <div class="theme-pips" id="theme-pips"></div>
+        </div>
+
+        <div class="hero-scroll-hint">
+            <span>Keep reading</span>
+            <div class="scroll-line"></div>
+        </div>
+    </header>
+
+    <!-- THE LETTER -->
+    <div class="letter-wrap">
+
+        <h2 class="letter-salutation">Hey — we've been meaning to ask you something.</h2>
+
+        <div class="letter-body">
+
+            <p>
+                Kat and I want to get our people together. <strong>Actually together</strong> — not 
+                "we should really do something soon" together. Once a month, around a 
+                table, with food that someone actually made and a night that doesn't end 
+                because the bar is closing.
+            </p>
+
+            <p>
+                No restaurants. No splitting a check eleven ways while someone does math 
+                on their phone. No small talk with strangers at the next table. Just the 
+                people we genuinely want to be around — and a reason to show up that's a 
+                little more interesting than a group chat that never goes anywhere.
+            </p>
+
+            <p>
+                We're calling it <em>The Family Table Supper Club</em>. The name is a little 
+                fancy. The vibe is decidedly not — or it is, depending on whose month it 
+                is. That's kind of the whole point.
+            </p>
+
+            <p>
+                Here's how it works: each month, a different pair of people picks a theme 
+                and runs with it — they cook the starter and the main, set the mood, and 
+                put together a playlist if they're feeling it. Everyone else brings a side 
+                or a dessert that fits the theme, plus something to drink. Nobody hosts 
+                alone, nobody has to do it every month, and nobody is stuck at the sink 
+                at midnight by themselves.
+            </p>
+
+            <p>
+                We're going first. <strong>We'll kick things off in April</strong> — a Friday, Saturday, 
+                or Sunday night, depending on what works best for the group once we know 
+                who's in. After that, the hosting rotates, the themes are entirely up to 
+                whoever has the month, and we'll see where it goes.
+            </p>
+
+            <p>
+                The themes up top aren't a schedule — they're just a taste of where this 
+                could go. A proper steakhouse night. A backyard situation with cold beer 
+                and questionable decisions. Breakfast for dinner at 8pm. A Sunday gravy 
+                that's been going since noon. Wherever the hosting pair takes it, 
+                that's where we go.
+            </p>
+
+            <p>
+                You're reading this because you're someone we actually want at this table. 
+                We've got people coming from every corner of our lives — and eventually, 
+                this is the thing we want to look back on. The dinners. The running jokes. 
+                The kids who grew up calling each other's parents aunts and uncles because 
+                that's just what they always were. <strong>We want to build that. We're starting now.</strong>
+            </p>
+
+        </div>
+
+        <div class="letter-signoff">
+            <p>We'd love to have you at the table this season.</p>
+            <p>Say yes. We'll figure out the rest together.</p>
+            <div class="letter-signature">Kat &amp; Christopher</div>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-wrap">
+            <p class="cta-closing">If you're in — or even just a little curious — let us know.</p>
+            <div class="cta-deadline">RSVP by March 15 so we can plan</div>
+            <div class="cta-buttons">
+                <a
+                    href="mailto:katkendall01@gmail.com,ruritanrunner@aol.com?subject=I'm%20In%20%E2%80%94%20Family%20Table%20Supper%20Club%202026&body=Hey%20Kat%20and%20Christopher%2C%0A%0ACount%20me%20in%20for%20Season%20One%20of%20The%20Family%20Table%20Supper%20Club!%0A%0AName%3A%20%5BYour%20Name%5D%0APlus%20one%3F%20%5BYes%20%2F%20No%5D%0ADietary%20needs%20or%20aversions%3A%20%5BNone%20%2F%20List%20them%5D%0AApril%20nights%20that%20don't%20work%20for%20me%3A%20%5BNone%20%2F%20List%20them%5D%0A%0ACan't%20wait."
+                    class="btn btn-primary"
+                >Count Me In — Email</a>
+
+                <a
+                    href="sms:+15714424574,+14346037733?body=Hey%20Kat%20and%20Christopher%20%E2%80%94%20I'm%20in%20for%20Season%20One%20of%20The%20Family%20Table%20Supper%20Club!%20%F0%9F%8D%BD%EF%B8%8F"
+                    class="btn btn-secondary"
+                >Text Us Instead</a>
+            </div>
+
+            <button class="rules-trigger" id="rules-trigger">
+                Wondering how it all works? The fine print is short, we promise. →
+            </button>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>The Family Table Supper Club &nbsp;·&nbsp; Season One · 2026</p>
+    </footer>
+
+    <!-- RULES MODAL -->
+    <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal" id="modal">
+            <div class="modal-handle"></div>
+            <button class="modal-close" id="modal-close" aria-label="Close">&#x2715;</button>
+
+            <p class="modal-eyebrow">Season One &nbsp;·&nbsp; 2026</p>
+            <h2 class="modal-title" id="modal-title">The Official Rules</h2>
+            <p class="modal-tagline">
+                The first rule of Supper Club is: there are no rules in Supper Club.
+                <span class="punchline">(The second rule is that there are, in fact, a few rules. They're reasonable. We promise.)</span>
+            </p>
+
+            <div class="modal-rule">
+                <p class="modal-rule-label">Where You'll Be</p>
+                <h4>The Venue</h4>
+                <p>Host wherever makes sense — your place, someone else's, wherever works for the group. Kat and Christopher's house is always available as a fallback if the headcount outgrows the host's space. No one should feel locked out because of square footage.</p>
+            </div>
+
+            <div class="modal-rule">
+                <p class="modal-rule-label">Who Does What</p>
+                <h4>Division of Labor</h4>
+                <p>The hosting pair picks the theme, cooks the starter and the main, and sets the mood — playlist optional but encouraged. Everyone else brings a side or a dessert that fits the theme. Drinks are on the guests, or the group can pool into a drinks fund for the night — whatever makes more sense for the theme and the hosting team's budget.</p>
+            </div>
+
+            <div class="modal-rule">
+                <p class="modal-rule-label">No Solo Acts</p>
+                <h4>Team Hosting</h4>
+                <p>Nobody hosts alone. The group gets paired into co-hosting duos — couples, friends, whoever makes sense. The prep, the cost, and the credit are always shared.</p>
+            </div>
+
+            <div class="modal-rule">
+                <p class="modal-rule-label">Spend What You Want</p>
+                <h4>No Budget Floor or Ceiling</h4>
+                <p>A $14 taco bar and a $90 seafood boil are equally valid. What you spend is entirely your call. Creativity beats cost every time.</p>
+            </div>
+
+            <div class="modal-rule">
+                <p class="modal-rule-label">Life Happens</p>
+                <h4>The Flake &amp; Swap Clause</h4>
+                <p>Every hosting pair gets one Swap per season — trade your month with another pair if something comes up. Flake <em>after</em> burning your swap, and you're buying the group's takeout that night. Fair is fair.</p>
+            </div>
+
+            <div class="modal-rule">
+                <p class="modal-rule-label">Know Before You Cook</p>
+                <h4>The Dietary Master List</h4>
+                <p>Before Month 1, we'll put together a shared list of allergies and aversions. It becomes the guide for every hosting pair. Nobody should have to eat around something dangerous — or sit there picking at a salad all night.</p>
+            </div>
+
+            <div class="modal-rule">
+                <p class="modal-rule-label">Bringing a Plus-One</p>
+                <h4>The Plus-One Policy</h4>
+                <p>The club is a closed loop for the season, mostly to protect the host's budget and sanity. Plus-ones are absolutely welcome — just give a heads up in advance so no one is caught off guard the day of.</p>
+            </div>
+
+            <div class="modal-rule">
+                <p class="modal-rule-label">Passing the Torch</p>
+                <h4>The Handover</h4>
+                <p>At the end of every dinner, the hosting pair passes the baton. The next pair announces their theme so everyone has a full month to plan what they're bringing. This is the part we're most excited about.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ── Video fallback ───────────────────────────────────────
+        document.getElementById('hero-video').addEventListener('error', function() {
+            this.style.display = 'none';
+        });
+
+        // ── Modal ────────────────────────────────────────────────
+        const overlay = document.getElementById('modal-overlay');
+        const modal   = document.getElementById('modal');
+
+        function openModal() {
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('modal-close').focus();
+        }
+
+        function closeModal() {
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+            document.getElementById('rules-trigger').focus();
+        }
+
+        document.getElementById('rules-trigger').addEventListener('click', openModal);
+        document.getElementById('modal-close').addEventListener('click', closeModal);
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+        });
+
+        // Swipe down to close on mobile
+        let touchStartY = 0;
+        modal.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; }, { passive: true });
+        modal.addEventListener('touchend', (e) => {
+            if (e.changedTouches[0].clientY - touchStartY > 60 && modal.scrollTop === 0) closeModal();
+        }, { passive: true });
+
+        // ── Themes ───────────────────────────────────────────────
+        const themes = [
+            {
+                // Elegant, editorial — old-money steakhouse
+                title: "The Moody Steakhouse",
+                subtitle: "Dim Lighting. Ribeyes. Red Wine.",
+                font: "'Cormorant Garamond', serif",
+                accentColor: "#c9a84c",
+                bg: "radial-gradient(ellipse at 55% 40%, #2e1f05 0%, #0c0b09 72%)"
+            },
+            {
+                // Bold, condensed, no-nonsense — pure BBQ energy
+                title: "The Backyard BBQ",
+                subtitle: "Low & Slow. Brisket. Cold Beer.",
+                font: "'Bebas Neue', sans-serif",
+                accentColor: "#e06030",
+                bg: "radial-gradient(ellipse at 40% 55%, #2a0e04 0%, #0c0b09 72%)"
+            },
+            {
+                // Soft, retro, diner-ish — breakfast at night feels
+                title: "Breakfast For Dinner",
+                subtitle: "Pancakes. Bacon. Mimosas at 8PM.",
+                font: "'Fredoka One', cursive",
+                accentColor: "#d48090",
+                bg: "radial-gradient(ellipse at 60% 35%, #280f1e 0%, #0c0b09 72%)"
+            },
+            {
+                // Handwritten chaos — scrawled on a takeout bag
+                title: "Richmond Takeout Night",
+                subtitle: "Five Spots. Zero Cooking. All Chaos.",
+                font: "'Permanent Marker', cursive",
+                accentColor: "#00b894",
+                bg: "radial-gradient(ellipse at 45% 50%, #041f18 0%, #0c0b09 72%)"
+            },
+            {
+                // Heavy, impactful — like a crab shack sign
+                title: "The Coastal Seafood Boil",
+                subtitle: "Old Bay. Shell-On. Newspaper Tablecloth.",
+                font: "'Abril Fatface', serif",
+                accentColor: "#5aafd4",
+                bg: "radial-gradient(ellipse at 50% 45%, #051626 0%, #0c0b09 72%)"
+            },
+            {
+                // Classic Italian script energy — Sunday sauce
+                title: "Sunday Gravy",
+                subtitle: "Long Simmer. Good Pasta. Table Stays Set.",
+                font: "'Satisfy', cursive",
+                accentColor: "#c45a5a",
+                bg: "radial-gradient(ellipse at 55% 40%, #260808 0%, #0c0b09 72%)"
+            },
+            {
+                // Punchy, geometric, loud — taco stand signage
+                title: "Taco Tuesday (On a Saturday)",
+                subtitle: "Street Tacos. Tequila. Questionable Decisions.",
+                font: "'Righteous', cursive",
+                accentColor: "#d4b830",
+                bg: "radial-gradient(ellipse at 50% 50%, #1e1802 0%, #0c0b09 72%)"
+            },
+            {
+                // Clean, modern, airy — garden party invitation
+                title: "The Garden Party",
+                subtitle: "Fresh Herbs. Rosé. Eating Outside Like Adults.",
+                font: "'Josefin Sans', sans-serif",
+                accentColor: "#72b872",
+                bg: "radial-gradient(ellipse at 45% 40%, #081808 0%, #0c0b09 72%)"
+            }
+        ];
+
+        let currentIndex = 0;
+        let isAnimating  = false;
+        const titleEl    = document.getElementById('dynamic-title');
+        const subEl      = document.getElementById('dynamic-subtitle');
+        const bgEl       = document.getElementById('hero-bg');
+        const divEl      = document.getElementById('hero-divider');
+        const nameEl     = document.getElementById('hero-club-name');
+        const pipsEl     = document.getElementById('theme-pips');
+
+        themes.forEach((t, i) => {
+            const pip = document.createElement('div');
+            pip.className = 'pip' + (i === 0 ? ' active' : '');
+            pip.style.background = i === 0 ? t.accentColor : '#2a2820';
+            pip.addEventListener('click', () => jumpToTheme(i));
+            pipsEl.appendChild(pip);
+        });
+
+        function updatePips(index) {
+            pipsEl.querySelectorAll('.pip').forEach((p, i) => {
+                p.classList.toggle('active', i === index);
+                p.style.background = i === index ? themes[i].accentColor : '#2a2820';
+            });
+        }
+
+        function applyColors(theme, index) {
+            bgEl.style.background  = theme.bg;
+            divEl.style.background = theme.accentColor;
+            subEl.style.color      = theme.accentColor;
+            nameEl.style.color     = theme.accentColor;
+            updatePips(index);
+        }
+
+        function cycleTheme(nextIndex) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            titleEl.style.opacity   = '0';
+            titleEl.style.transform = 'translateY(-10px)';
+            subEl.style.opacity     = '0';
+            subEl.style.transform   = 'translateY(-10px)';
+
+            setTimeout(() => {
+                currentIndex             = (nextIndex !== undefined) ? nextIndex : (currentIndex + 1) % themes.length;
+                const t                  = themes[currentIndex];
+                titleEl.innerText        = t.title;
+                titleEl.style.fontFamily = t.font;
+                subEl.innerText          = t.subtitle;
+                titleEl.style.transform  = 'translateY(10px)';
+                subEl.style.transform    = 'translateY(10px)';
+                applyColors(t, currentIndex);
+
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    titleEl.style.opacity   = '1';
+                    titleEl.style.transform = 'translateY(0)';
+                    subEl.style.opacity     = '1';
+                    subEl.style.transform   = 'translateY(0)';
+                    isAnimating = false;
+                }));
+            }, 460);
+        }
+
+        function jumpToTheme(index) {
+            if (index === currentIndex) return;
+            clearInterval(cycleInterval);
+            cycleTheme(index);
+            cycleInterval = setInterval(() => cycleTheme(), 4400);
+        }
+
+        applyColors(themes[0], 0);
+        let cycleInterval = setInterval(() => cycleTheme(), 4400);
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) clearInterval(cycleInterval);
+            else cycleInterval = setInterval(() => cycleTheme(), 4400);
+        });
+    </script>
+
+</body>
+</html>
